@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask
 from flask import render_template
 
@@ -5,14 +7,9 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def hello_world():
-    return 'Hello, World!'
-
-
-
-@app.route('/')
 def index():
-    # add code here to fetch the job posts from a file
+    with open("data.json", "r") as handle:
+        blog_posts = json.load(handle)
     return render_template('index.html', posts=blog_posts)
 
 
