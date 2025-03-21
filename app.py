@@ -6,6 +6,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+    """displays blog posts on home"""
     with open("data.json", "r") as handle:
         blog_posts = json.load(handle)
     return render_template('index.html', posts=blog_posts)
@@ -13,6 +14,8 @@ def index():
 
 @app.route('/add', methods=['GET', 'POST'])
 def add():
+    """allows user to add a new post, saves input into variables, creates new
+    post, adds it to the dictionary and overwrites json data"""
     if request.method == 'POST':
         title = request.form['title']
         author = request.form['author']
@@ -40,6 +43,8 @@ def add():
 
 @app.route('/delete/<int:post_id>', methods=['POST'])
 def delete(post_id):
+    """allows user to delete a post. reads blog posts and loops through them,
+    saving all except the one to delete, then overwriting the json data"""
     with open("data.json", "r") as handle:
         blog_posts = json.load(handle)
 
@@ -54,19 +59,24 @@ def delete(post_id):
 
 @app.route('/update/<int:post_id>', methods=['GET', 'POST'])
 def update(post_id):
+    """allows user to update dictionary. loads data for the chosen blog post, displays form and
+    saves changes to data. redirects to home"""
     with open("data.json", "r") as handle:
         blog_posts = json.load(handle)
 
+    #finding blog post with the correct id
     blog_post = next((post for post in blog_posts if post["id"] == post_id), None)
 
     if blog_post is None:
         return "Post not found", 404
 
+    #assigning form input to variables
     if request.method == 'POST':
         title = request.form['title']
         author = request.form['author']
         content = request.form['content']
 
+        #updating dictionary
         if title:
             blog_post["title"] = title
         if author:
@@ -74,6 +84,7 @@ def update(post_id):
         if content:
             blog_post["content"] = content
 
+        #overwriting data with updated data
         with open("data.json", "w") as handle:
             json.dump(blog_posts, handle)
 
